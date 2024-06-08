@@ -1,25 +1,26 @@
-import requests
-from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
 
-url = "https://dining.purdue.edu/menus/"
+# Set up options
+options = webdriver.ChromeOptions()
+options.page_load_strategy = 'normal'
 
-headers = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142 Safari/537.36',  # Replace with actual Chrome version
-  'Accept-Language': 'en-US,en;q=0.5',
-  'Accept-Encoding': 'gzip, deflate, br',  # Add Brotli compression support (optional)
-  'Connection': 'keep-alive',
-}
+# Initialize the WebDriver
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-request = requests.get(url=url, headers=headers)
-print(request.text)
-soup = BeautifulSoup(request.text, 'html.parser')
+# Open the website
+driver.get("https://dining.purdue.edu/menus/")
 
-# text_diningcourt = soup.find('div', style
-# print(len(text_diningcourt))
-# for element in text_diningcourt:
-#     print(element)
-#     print("/n/n/n/n/n/n/n/n/n/n")
+# Wait for the elements to load
+driver.implicitly_wait(5)  # Adjust the wait time as needed
 
+# Find elements by class name
+dining_court_options = driver.find_elements(By.CLASS_NAME, "MuiList-root.MuiList-padding.css-1ontqvh")
+print(len(dining_court_options))
+for option in dining_court_options:
+   print(option.text)
 
-
-
+# Close the driver
+driver.quit()
